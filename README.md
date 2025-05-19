@@ -54,7 +54,7 @@ IUT-SAE2.04/
 │   ├── noc_regions.csv           # Correspondance des codes NOC et des pays
 │   └── turin_stats_2006.csv      # Statistiques JO Turin 2006
 ├── graph/                        # Script Python pour les graphiques
-├── rapport.md                    # Rapport d'analyse en Markdown
+├── rapport.adoc                  # Rapport d'analyse en AsciiDoctor
 ├── rapport.pdf                   # Rapport d'analyse en  PDF
 ├── README.md
 ├── SAE 2.04_2025.pdf             # Présentation de la SAE 2.04

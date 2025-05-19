@@ -5,7 +5,7 @@ import numpy as np
 import io
 from matplotlib.patches import Patch # Pour la légende personnalisée
 
-# Données complètes pour la proportion hommes/femmes (1992-2006)
+# Données complètes pour la proportion hommes/femmes (1992-2016)
 # Format: Année;Pays;Proportion_Hommes;Proportion_Femmes
 data_proportion_str_full = """Année;Pays;Proportion_Hommes;Proportion_Femmes
 1992;France;0.71;0.29
@@ -48,6 +48,31 @@ data_proportion_str_full = """Année;Pays;Proportion_Hommes;Proportion_Femmes
 2006;Japan;0.53;0.47
 2006;Russia;0.57;0.43
 2006;USA;0.57;0.43
+2008;France;0.61;0.39
+2008;Germany;0.56;0.44
+2008;Japan;0.50;0.50
+2008;Russia;0.51;0.49
+2008;USA;0.52;0.48
+2010;France;0.64;0.36
+2010;Germany;0.62;0.38
+2010;Japan;0.53;0.47
+2010;Russia;0.54;0.46
+2010;USA;0.57;0.43
+2012;France;0.56;0.44
+2012;Germany;0.55;0.45
+2012;Japan;0.47;0.53
+2012;Russia;0.47;0.53
+2012;USA;0.49;0.51
+2014;France;0.64;0.36
+2014;Germany;0.50;0.50
+2014;Japan;0.44;0.56
+2014;Russia;0.59;0.41
+2014;USA;0.55;0.45
+2016;France;0.57;0.43
+2016;Germany;0.54;0.46
+2016;Japan;0.51;0.49
+2016;Russia;0.50;0.50
+2016;USA;0.48;0.52
 """
 
 # Lecture des données. La virgule décimale est déjà un point dans les données fournies.
@@ -86,7 +111,7 @@ for i, pays_actuel in enumerate(pays_liste):
 
 ax.set_xlabel('Année', fontsize=14)
 ax.set_ylabel('Proportion', fontsize=14)
-ax.set_title('Proportion des femmes et des hommes par pays et par année (1992-2006)', fontsize=18)
+ax.set_title('Proportion des femmes et des hommes par pays et par année (1992-2016)', fontsize=18)
 ax.set_xticks(x_indices)
 ax.set_xticklabels(annees)
 plt.yticks(np.arange(0, 1.1, 0.1))
@@ -128,7 +153,7 @@ for i, annee_actuelle in enumerate(annees):
 
 ax.set_xlabel('Pays regroupés par Année', fontsize=14)
 ax.set_ylabel('Proportion', fontsize=14)
-ax.set_title('Proportion des femmes et des hommes par pays et par année (1992-2006)', fontsize=18)
+ax.set_title('Proportion des femmes et des hommes par pays et par année (1992-2016)', fontsize=18)
 
 # Étiquettes X: Années centrées sur leurs groupes de barres
 tick_positions = [i * (group_width + 0.2) + group_width/2 - bar_width/2 for i in range(n_annees)]
@@ -149,7 +174,84 @@ plt.tight_layout(rect=[0, 0, 0.85, 1]) # Ajuster pour la légende externe
 plt.show()
 
 # --- Version alternative: une figure par année (souvent plus lisible pour ce type de données) ---
-# (Le code pour cette version est dans la réponse précédente et peut être adapté avec les nouvelles données si préféré)
-# for annee_specifique in annees:
-#     df_annee_specifique = df_proportion[df_proportion['Année'] == annee_specifique].set_index('Pays')
-#     # ... (reste du code pour le graphique par année) ...
+# Création de graphiques séparés pour les JO d'été et d'hiver
+# Identification des années de JO d'été et d'hiver
+annees_ete = [1992, 1996, 2000, 2004, 2008, 2012, 2016]
+annees_hiver = [1994, 1998, 2002, 2006, 2010, 2014]
+
+df_ete = df_proportion[df_proportion['Année'].isin(annees_ete)]
+df_hiver = df_proportion[df_proportion['Année'].isin(annees_hiver)]
+
+# Graphique pour les Jeux d'Été
+fig_ete, ax_ete = plt.subplots(figsize=(14, 8))
+for i, pays_actuel in enumerate(pays_liste):
+    df_pays_ete = df_ete[df_ete['Pays'] == pays_actuel]
+    
+    for j, annee in enumerate(df_pays_ete['Année'].unique()):
+        df_annee = df_pays_ete[df_pays_ete['Année'] == annee]
+        pos = i + j * (len(pays_liste) + 1)
+        
+        # Barres pour les femmes (en bas)
+        ax_ete.bar(pos, df_annee['Proportion_Femmes'].values[0], 0.8, color=colors(i), alpha=0.6)
+        # Barres pour les hommes (empilées)
+        ax_ete.bar(pos, df_annee['Proportion_Hommes'].values[0], 0.8, bottom=df_annee['Proportion_Femmes'].values[0], color=colors(i), alpha=1.0)
+
+ax_ete.set_title('Proportion des femmes et des hommes aux Jeux d\'Été (1992-2016)', fontsize=16)
+ax_ete.set_ylabel('Proportion', fontsize=14)
+ax_ete.set_yticks(np.arange(0, 1.1, 0.1))
+ax_ete.grid(True, axis='y', linestyle='--', alpha=0.7)
+
+# Positions et étiquettes personnalisées pour l'axe X
+positions_etiquettes = []
+etiquettes = []
+for j, annee in enumerate(annees_ete):
+    position_centrale = j * (len(pays_liste) + 1) + (len(pays_liste) - 1) / 2
+    positions_etiquettes.append(position_centrale)
+    etiquettes.append(str(annee))
+
+ax_ete.set_xticks(positions_etiquettes)
+ax_ete.set_xticklabels(etiquettes)
+
+# Légende
+legend_ete = [Patch(facecolor=colors(j), label=pays_liste[j]) for j in range(n_pays)]
+legend_ete.append(Patch(facecolor='grey', alpha=0.6, label='Femmes'))
+legend_ete.append(Patch(facecolor='grey', alpha=1.0, label='Hommes'))
+ax_ete.legend(handles=legend_ete, bbox_to_anchor=(1.02, 1), loc='upper left')
+
+plt.tight_layout(rect=[0, 0, 0.85, 1])
+plt.show()
+
+# Graphique pour les Jeux d'Hiver (même logique que pour l'été)
+fig_hiver, ax_hiver = plt.subplots(figsize=(14, 8))
+for i, pays_actuel in enumerate(pays_liste):
+    df_pays_hiver = df_hiver[df_hiver['Pays'] == pays_actuel]
+    
+    for j, annee in enumerate(df_pays_hiver['Année'].unique()):
+        df_annee = df_pays_hiver[df_pays_hiver['Année'] == annee]
+        pos = i + j * (len(pays_liste) + 1)
+        
+        ax_hiver.bar(pos, df_annee['Proportion_Femmes'].values[0], 0.8, color=colors(i), alpha=0.6)
+        ax_hiver.bar(pos, df_annee['Proportion_Hommes'].values[0], 0.8, bottom=df_annee['Proportion_Femmes'].values[0], color=colors(i), alpha=1.0)
+
+ax_hiver.set_title('Proportion des femmes et des hommes aux Jeux d\'Hiver (1994-2014)', fontsize=16)
+ax_hiver.set_ylabel('Proportion', fontsize=14)
+ax_hiver.set_yticks(np.arange(0, 1.1, 0.1))
+ax_hiver.grid(True, axis='y', linestyle='--', alpha=0.7)
+
+positions_etiquettes_hiver = []
+etiquettes_hiver = []
+for j, annee in enumerate(annees_hiver):
+    position_centrale = j * (len(pays_liste) + 1) + (len(pays_liste) - 1) / 2
+    positions_etiquettes_hiver.append(position_centrale)
+    etiquettes_hiver.append(str(annee))
+
+ax_hiver.set_xticks(positions_etiquettes_hiver)
+ax_hiver.set_xticklabels(etiquettes_hiver)
+
+legend_hiver = [Patch(facecolor=colors(j), label=pays_liste[j]) for j in range(n_pays)]
+legend_hiver.append(Patch(facecolor='grey', alpha=0.6, label='Femmes'))
+legend_hiver.append(Patch(facecolor='grey', alpha=1.0, label='Hommes'))
+ax_hiver.legend(handles=legend_hiver, bbox_to_anchor=(1.02, 1), loc='upper left')
+
+plt.tight_layout(rect=[0, 0, 0.85, 1])
+plt.show()
