@@ -32,7 +32,7 @@
 
 ## Structure des fichiers
 ```plaintext
-BDD-Maths/
+IUT-SAE2.04/
 ├── .github/
 ├── bdd/
 │   └── schema.sql                # Schéma de la base de données
