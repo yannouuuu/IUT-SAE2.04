@@ -77,7 +77,7 @@ Les résultats sont présentés sous forme de requêtes SQL, tableaux statistiqu
 
 ### Remerciements
 
-Nous tenons à remercier "MATHIEU Phillipe et DELETOMBE  Marie" pour leurs encadrements dans le cadre de ce projet de base de données et statistiques.
+Nous tenons à remercier **MATHIEU Phillipe et DELETOMBE  Marie** pour leurs encadrements dans le cadre de ce projet de base de données et statistiques.
 
 <br/>
 <p align="center">
